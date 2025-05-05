@@ -1,0 +1,216 @@
+/* Button styling */
+.button-container {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    flex-wrap: nowrap; /* Prevent wrapping to the next line */
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    width: 90%; /* Ensure the container fits within the screen */
+    max-width: 600px; /* Limit maximum width */
+    overflow-x: auto; /* Enable horizontal scrolling for buttons */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+.button-container button {
+    padding: 10px 10px;
+    font-size: 16px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    flex: 0 0 auto; /* Prevent buttons from shrinking */
+    margin: 1px;
+}
+.button-container button:hover {
+    background-color: rgb(0, 159, 0);
+}
+.model-buttons {
+    display: none; /* Hide model buttons initially */
+}
+
+/* Compare Devices Checkbox */
+.compare-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: white;
+    font-size: 16px;
+    flex: 0 0 auto; /* Prevent checkbox from shrinking */
+}
+.compare-checkbox input {
+    margin: 0;
+}
+
+/* Navigation buttons */
+.nav-button {
+    font-size: 24px;
+    background-color: rgba(0, 123, 255, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto; /* Prevent navigation buttons from shrinking */
+}
+
+/* New Description Text */
+#initial-description {
+    position: absolute;
+    top: 10px;
+    left: 45%;
+    font-size: smaller;
+    transform: translateX(-50%);
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: green;
+    padding: 0.8rem;
+    border-radius: 5px;
+    width: 110%;
+    /* max-width: 400px; */
+    box-sizing: border-box;
+    z-index: 1000;
+}
+
+
+/* Footer */
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: #242424;
+    z-index: 10000; /* Ensure footer is above A-Frame scene */
+    box-sizing: border-box;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px;
+    background-color: #333;
+    border-radius: 25px;
+}
+
+.input-area button {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-area button i {
+    color: #fff;
+}
+
+.input-area button.active { /* Added style */
+    background-color: red;
+}
+
+.input-area input[type="text"] {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    padding: 10px;
+}
+
+.input-area input[type="text"]::placeholder {
+    color: #aaa;
+}
+
+/* Hamburger Menu */
+#hamburger-menu {
+    position: absolute;
+    top: 0.5rem;
+    left:23.5rem;
+    z-index: 10000;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+}
+
+#nav-menu {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    padding: 10px;
+    display: none;
+    z-index: 10000;
+}
+
+#nav-menu a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    font-family: Arial, sans-serif;
+}
+
+#nav-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .ar-button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .input-area {
+        padding: 6px;
+    }
+
+    .input-area button {
+        width: 30px;
+        height: 30px;
+    }
+
+    .input-area input[type="text"] {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .ar-button {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .input-area {
+        padding: 4px;
+    }
+
+    .input-area button {
+        width: 25px;
+        height: 25px;
+    }
+
+    .input-area input[type="text"] {
+        padding: 6px;
+    }
+}

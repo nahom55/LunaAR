@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smartphone AR Showcase</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-drag-drop-component@^1.0.0/dist/aframe-drag-drop-component.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link rel="stylesheet" type="" href="style-dev.css">
+    
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <!-- Hamburger Menu -->
+    
+
+    <!-- Navigation Menu -->
+    <!-- Hamburger Menu -->
+    <div id="nav-menu">
+        <a href='#'>Home</a>
+        <a href='#'>Setup wifi</a>
+        <a href='#'>Devices</a>
+    </div>
+    <!-- Initial Description Text -->
+    <div id="initial-description">
+        Please choose the device you want to get details.
+        <div id="hamburger-menu">
+        <i class="fas fa-bars"></i>
+    </div>
+    </div>
+
+    <!-- AR Scene -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+        <!-- Dynamic 3D Models will be inserted here -->
+        <a-entity id="models-container"></a-entity>
+
+        <!-- Camera with constrained movement -->
+        <a-entity id="camera" camera look-controls="enabled: false" wasd-controls="enabled: false">
+            <!-- Cursor for interaction -->
+            <a-entity cursor="fuse: true; fuseTimeout: 500"
+                      position="0 0 -1"
+                      geometry="primitive: ring; radiusInner: 0; radiusOuter: 0"
+                      material="color: #007BFF; shader: flat">
+            </a-entity>
+        </a-entity>
+    </a-scene>
+
+    <!-- Category Buttons and Compare Devices Checkbox -->
+    <!-- <div class="button-container" id="category-buttons">
+        <button onclick="showModelButtons('samsung')">Samsung</button>
+        <button onclick="showModelButtons('itel')">Itel</button>
+        <button onclick="showModelButtons('tecno')">Kimem</button>
+        <div class="compare-checkbox">
+            <input type="checkbox" id="compare-checkbox">
+            <label for="compare-checkbox">Compare Devices</label>
+        </div>
+        <button onclick="popCompare()">POP</button>
+        <button onclick="popSingleModel()">POP1</button>
+    </div> -->
+
+    <!-- Model Buttons with Navigation (Hidden Initially) -->
+    <div class="button-container model-buttons" id="samsung-buttons">
+        <button class="nav-button" onclick="goBack()">&lt;</button>
+        <button onclick="loadModel('sam', ['Only @Price Br.25000', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung'])">Samsung S21</button>
+        <button onclick="loadModel('s22', ['Only @Price Br.15000  ', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung',])">Samsung A52</button>
+        <button class="nav-button" onclick="goNext()">&gt;</button>
+    </div>
+    <div class="button-container model-buttons" id="itel-buttons">
+        <button class="nav-button" onclick="goBack()">&lt;</button>
+        <button onclick="loadModel('s21', ['Only @Price Br.25000', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung'])">Itel A21</button>
+        <button onclick="loadModel('s22', ['Only @Price Br.15000  ', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung'])">Itel S22</button>
+        <button class="nav-button" onclick="goNext()">&gt;</button>
+    </div>
+    <div class="button-container model-buttons" id="tecno-buttons">
+        <button class="nav-button" onclick="goBack()">&lt;</button>
+        <button onclick="loadModel('rout', ['Only @Price Br.3000', 'Supports 10 devices', 'Battery 2900 mah', 'With Screen Display', 'Produced @ Teleone'])">Mi-Fi</button>
+        <button onclick="loadModel('rout', ['Only @Price Br.6000', 'Supports 8 devices', 'Battery 5200 mah', 'With Screen Display', 'Produced @ Teleone'])">Kimem nana</button>
+        <button class="nav-button" onclick="goNext()">&gt;</button>
+    </div>
+
+    <!-- Green background plane with buttons -->
+    <footer>
+        <div class="input-area">
+            <button class="mic-button"><i class="fas fa-microphone"></i></button>
+            <button class="video-button"><i class="fas fa-video"></i></button>
+            <input type="text" placeholder="Type something" id="textInput">
+            <button class="send-button"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </footer>
+
+
+    <script>
+        let currentCategory = null;
+        let selectedModel = null; // Track the currently selected model
+        let modelCount = 0; // Track the number of models loaded
+
+        const hamburgerMenu = document.getElementById("hamburger-menu");
+        const navMenu = document.getElementById("nav-menu");
+
+        hamburgerMenu.addEventListener("click", () => {
+            navMenu.style.display = navMenu.style.display === "block" ? "none" : "block";
+        });
+
+
+        navMenu.addEventListener("click", function(e){
+  clicker(e);
+});
+function clicker(e){
+  e.preventDefault();
+const btn=e.target.textContent;
+if(btn=="Home"){
+  window.location.href="http://127.0.0.1:5500/frontpage.html";
+}
+if(btn=="Devices"){
+  window.location.href="http://127.0.0.1:5500/devices.html";
+}
+if(btn=="Setup wifi"){
+  window.location.href="http://127.0.0.1:5500/new-wifi.html";
+}
+}
+
+        // Function to pop up both Samsung models in compare mode
+        function popCompare() {
+            // Clear existing models
+            const modelsContainer = document.getElementById('models-container');
+            while (modelsContainer.firstChild) {
+                modelsContainer.removeChild(modelsContainer.firstChild);
+            }
+            modelCount = 0;
+            
+            // Enable compare mode
+            document.getElementById('compare-checkbox').checked = true;
+            
+            // Load both Samsung models
+            loadModel('sam', ['Only @Price Br.25000', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung']);
+            loadModel('s22', ['Only @Price Br.15000', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung']);
+        }
+
+        // Function to pop up only sam.glb model
+        function popSingleModel() {
+            // Clear existing models
+            const modelsContainer = document.getElementById('models-container');
+            while (modelsContainer.firstChild) {
+                modelsContainer.removeChild(modelsContainer.firstChild);
+            }
+            modelCount = 0;
+            
+            // Disable compare mode
+            document.getElementById('compare-checkbox').checked = false;
+            
+            // Load only the sam.glb model
+            loadModel('sam', ['Only @Price Br.25000', 'RAM 6 GB', 'Storage 128 GB', 'Font camera 12 MP', 'Back camera 5 MP', 'Battery 5100 mah', 'Screen 6.5\'', 'Produced @ Samsung']);
+        }
+
+        // Function to load 3D models
+        function loadModel(modelName, descriptionItems) {
+            const compareMode = document.getElementById('compare-checkbox').checked;
+
+            // Calculate the position based on compare mode
+            const position = compareMode
+                ? { x: 0.8 * modelCount, y: 0, z: -1.5 } // Compare mode: increment X position only (reduced gap)
+                : { x: -0.17, y: 0, z: -1.5 }; // Single mode: fixed position
+
+            // Remove previous model if not in compare mode
+            if (!compareMode && modelCount > 0) {
+                const modelsContainer = document.getElementById('models-container');
+                while (modelsContainer.firstChild) {
+                    modelsContainer.removeChild(modelsContainer.firstChild);
+                }
+                modelCount = 0; // Reset model count
+            }
+
+            // 1. Create a new model entity
+            const modelEntity = document.createElement('a-entity');
+            modelEntity.setAttribute('gltf-model', `${modelName}.glb`);
+            modelEntity.setAttribute('position', position);
+            modelEntity.setAttribute('scale', '0.005 0.005 0.005'); // Adjusted for visibility
+
+            // 2. Add rotation animation
+            modelEntity.setAttribute('animation', {
+                property: 'rotation',
+                to: '0 360 0',
+                loop: true,
+                dur: 10000,
+                easing: 'linear'
+            });
+
+            // 3. Add click handler for selection
+            modelEntity.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (selectedModel) {
+                    selectedModel.removeAttribute('draggable');
+                }
+                selectedModel = modelEntity;
+                modelEntity.setAttribute('draggable', '');
+            });
+
+            // 4. Add model to the scene
+            document.getElementById('models-container').appendChild(modelEntity);
+
+            // 5. Create a text plane for the description
+            const textPlane = document.createElement('a-entity');
+            textPlane.setAttribute('geometry', {
+                primitive: 'plane',
+                width: 0.3, // Reduced width
+                height: 0.32 // Reduced height
+            });
+            textPlane.setAttribute('material', {
+                color: 'white',
+                opacity: 0.9
+            });
+            textPlane.setAttribute('position', {
+                x: position.x + 0.32, // Place text plane next to the model (adjusted for reduced gap)
+                y: position.y, // Move text plane slightly upward
+                z: position.z
+            });
+
+            // 6. Add text to the text plane
+            const title = document.createElement('a-text');
+            title.setAttribute('value', 'Device Details');
+            title.setAttribute('color', '#4CAF50');
+            title.setAttribute('align', 'center');
+            title.setAttribute('position', '-0.024 0.08 0.01'); // Move title slightly upward
+            title.setAttribute('scale', '0.15 0.15 0.15');
+            textPlane.appendChild(title);
+
+            const ul = document.createElement('a-entity');
+            descriptionItems.forEach((item, index) => {
+                const li = document.createElement('a-text');
+                li.setAttribute('value', item);
+                li.setAttribute('color', '#333');
+                li.setAttribute('align', 'left');
+                li.setAttribute('position', `-0.12 ${-0.025 * index + 0.05} 0.01`); // Move text slightly upward
+                li.setAttribute('scale', '0.075 0.075 0.075');
+                ul.appendChild(li);
+            });
+            textPlane.appendChild(ul);
+
+            // 7. Add the text plane to the scene
+            document.getElementById('models-container').appendChild(textPlane);
+
+            // Increment the model count
+            modelCount++;
+        }
+
+        // Function to show model buttons based on category
+        function showModelButtons(category) {
+            currentCategory = category;
+            // Hide all model buttons
+            document.querySelectorAll('.model-buttons').forEach(buttonGroup => {
+                buttonGroup.style.display = 'none';
+            });
+
+            // Hide category buttons
+            document.getElementById('category-buttons').style.display = 'none';
+
+            // Show the selected category's model buttons
+            document.getElementById(`${category}-buttons`).style.display = 'flex';
+        }
+
+        // Function to go back to the main category buttons
+        function goBack() {
+            // Hide the model buttons and show the category buttons
+            document.querySelectorAll('.model-buttons').forEach(buttonGroup => {
+                buttonGroup.style.display = 'none';
+            });
+            document.getElementById('category-buttons').style.display = 'flex';
+        }
+
+        // Horizontal scrolling logic
+        const camera = document.getElementById('camera');
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+
+        // Mouse events for desktop
+        document.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                const cameraPosition = camera.getAttribute('position');
+                camera.setAttribute('position', {
+                    x: cameraPosition.x - deltaX * 0.01, // Adjust sensitivity
+                    y: cameraPosition.y,
+                    z: cameraPosition.z
+                });
+                startX = e.clientX;
+                startY = e.clientY;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch events for mobile
+        document.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const deltaX = e.touches[0].clientX - startX;
+                const deltaY = e.touches[0].clientY - startY;
+                const cameraPosition = camera.getAttribute('position');
+                camera.setAttribute('position', {
+                    x: cameraPosition.x - deltaX * 0.01, // Adjust sensitivity
+                    y: cameraPosition.y,
+                    z: cameraPosition.z
+                });
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+            }
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+    </script>
+</body>
+</html>

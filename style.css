@@ -1,0 +1,231 @@
+  /* CSS for step counter, description, and buttons */
+  .step-counter {
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: green;
+    padding: 10px;
+    border-radius: 5px;
+    flex: 1; /* Allow the step counter to grow and take available space */
+    margin: 0 10px; /* Add spacing between buttons and step counter */
+  }
+
+  /* New Description Text */
+  
+
+  .step-description {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    z-index: 1000;
+    text-align: center;
+    background: green;
+    padding: 10px;
+    border-radius: 5px;
+    width: 90%;
+    max-width: 300px;
+    box-sizing: border-box;
+    display: none; /* Initially hidden */
+  }
+
+  .step-description a {
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .nav-buttons {
+    position: fixed;
+    bottom: 60px; /* Adjusted to make space for the Home button */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Vertically center items */
+    gap: 10px;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .nav-buttons button {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    flex: 1; /* Allow buttons to grow and take equal space */
+    text-align: center;
+  }
+
+  /* Home button styling */
+  
+
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .step-counter {
+      font-size: 20px;
+      padding: 8px;
+    }
+
+    .step-description {
+      font-size: 16px;
+      padding: 8px;
+    }
+
+    .nav-buttons button {
+      font-size: 16px;
+      padding: 8px 16px;
+    }
+
+    
+  }
+
+  @media (max-width: 400px) {
+    .step-counter {
+      font-size: 18px;
+      padding: 6px;
+    }
+
+    .step-description {
+      font-size: 14px;
+      padding: 6px;
+    }
+
+    .nav-buttons button {
+      font-size: 14px;
+      padding: 6px 12px;
+    }
+
+    
+  }
+
+  /* Footer */
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: #242424;
+    z-index: 10000; /* Ensure footer is above A-Frame scene */
+    box-sizing: border-box;
+  }
+
+  .input-area {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px;
+    background-color: #333;
+    border-radius: 25px;
+  }
+
+  .input-area button {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #4CAF50; /* Green */
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .input-area button i {
+    color: #fff;
+  }
+
+  .input-area button.active { /* Added style */
+    background-color: red;
+  }
+
+  .input-area input[type="text"] {
+    flex: 1;
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    padding: 10px;
+  }
+
+  .input-area input[type="text"]::placeholder {
+    color: #aaa;
+  }
+
+  /* Hamburger Menu */
+  #hamburger-menu {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10000;
+    cursor: pointer;
+    color: white;
+    font-size: 24px;
+  }
+
+  #nav-menu {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    padding: 10px;
+    display: none;
+    z-index: 10000;
+  }
+
+  #nav-menu a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    font-family: Arial, sans-serif;
+  }
+
+  #nav-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    
+
+    .input-area {
+      padding: 6px;
+    }
+
+    .input-area button {
+      width: 30px;
+      height: 30px;
+    }
+
+    .input-area input[type="text"] {
+      padding: 8px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    
+
+    .input-area {
+      padding: 4px;
+    }
+
+    .input-area button {
+      width: 25px;
+      height: 25px;
+    }
+
+    .input-area input[type="text"] {
+      padding: 6px;
+    }
+  }
