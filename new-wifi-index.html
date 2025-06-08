@@ -17,7 +17,7 @@
         font-family: Arial, sans-serif;
         overflow-x: hidden;
       }
-      
+     
       /* AR Scene */
       a-scene {
         width: 100vw;
@@ -26,10 +26,10 @@
         top: 0;
         left: 0;
       }
-      
+     
       /* Hamburger Menu */
  
-      
+     
       /* Navigation Menu */
       #nav-menu {
         display: none;
@@ -42,7 +42,7 @@
         z-index: 1000;
         flex-direction: column;
       }
-      
+     
       #nav-menu a {
         color: white;
         text-decoration: none;
@@ -51,11 +51,11 @@
         display: flex;
         align-items: center;
       }
-      
+     
       #nav-menu a i {
         margin-right: 10px;
       }
-      
+     
       #nav-menu a:hover {
         background: rgba(255,255,255,0.2);
       }
@@ -65,14 +65,14 @@
         #nav-menu {
           width: 200px;
         }
-        
+       
       }
-      
+     
       @media (max-width: 480px) {
         #nav-menu {
           width: 180px;
         }
-        
+       
         #nav-menu a {
           padding: 10px 15px;
           font-size: 14px;
@@ -104,22 +104,22 @@
       <a href='#'><i class="fas fa-wifi"></i> Setup wifi</a>
       <a href='#'><i class="fas fa-laptop"></i> Devices</a>
     </div>
-    
+   
     <!-- Enhanced AR Scene -->
-    <a-scene embedded arjs="sourceType: webcam;" 
+    <a-scene embedded arjs="sourceType: webcam;"
     vr-mode-ui="enabled: false"
     renderer="logarithmicDepthBuffer: true; colorManagement: true, exposure: 1.0; toneMapping: ACESFilmic;"
      >
-      
+     
       <a-entity position="1.7 1.7 -2">
         <!-- Circular container -->
-        <a-circle 
-          color="#4285F4" 
-          radius="0.13" 
+        <a-circle
+          color="#4285F4"
+          radius="0.13"
           opacity="0.8"
           position="-0.98 -1.16 0"
         ></a-circle>
-        
+       
         <!-- Your human model centered in the circle -->
         <!-- <a-entity
           id="human-model"
@@ -130,38 +130,40 @@
           animation-mixer="clip: *; timeScale: 0; loop: repeat"
         ></a-entity>
       </a-entity> -->
-      
+     
       <!-- Original Antenna Model -->
       <a-entity
         id="antenna-model"
         gltf-model="url(antenna.glb)"
-        scale="0.0037 0.0037 0.0037"
+        scale="0.0065 0.0037 0.0037"
         position="0 0 0"
         rotation="45 0 0"
         visible="false"
-        make-transparent>
+        animation__rotate="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 2000; easing: linear">
+>
       </a-entity>
-
+ 
       <!-- Duplicate Antenna Model (0.4 units above original) -->
       <a-entity
         id="antenna-model-duplicate"
         gltf-model="url(antenna.glb)"
-        scale="0.0037 0.0037 0.0037"
+        scale="0.0065 0.0037 0.0037"
         position="0 0.3 0"
         rotation="45 0 0"
         visible="false"
-        make-transparent>
+        animation__rotate="property: rotation; from: 0 0 0; to: 0 360 0; loop: true; dur: 2000; easing: linear">
+>
       </a-entity>
-
+ 
       <!-- Enhanced Charger Slot Indicator -->
-      <a-entity 
+      <a-entity
         id="charger-indicator"
         position="0 0 0"
         visible="false">
-        
+       
         <!-- Pulsing Circle Base -->
-        <a-circle 
-          radius="0.05"
+        <a-circle
+          radius="0.04"
           color="#4285F4"
           opacity="0.6"
           position="0 -0.05 0"
@@ -170,22 +172,22 @@
         <!-- Text Label -->
         <a-entity
           text="value: Charger slot; color: white; align: center; width: 0.5"
-          position="0 -0.15 0"
-          scale="0.5 0.5 0.5">
+          position="0 -0.10 0"
+          scale="1.4 0.5 0.5">
         </a-entity>
       </a-entity>
-
+ 
       <!-- Enhanced WiFi Password Indicator -->
-      <a-entity 
+      <a-entity
         id="wifi-password-indicator"
         position="0 0 0"
         visible="false">
-        
+       
         <!-- Pulsing Effect -->
-        <a-circle 
+        <a-circle
           radius="0.06"
           position="0 -0.1 0"
-          color="#EA4335"
+          color="#4285F4"
           opacity="0.3"
           animation="property: scale; from: 1 1 1; to: 1.3 1.3 1; dir: alternate; loop: true; dur: 1500">
         </a-circle>
@@ -193,12 +195,12 @@
         <a-entity
           text="value: WiFi details; color: white; align: center; width: 0.6"
           position="0 -0.2 0"
-          scale="0.5 0.5 0.5">
+          scale="1.4 0.5 0.5">
         </a-entity>
       </a-entity>
-
+ 
       <!-- SIM Slot Indicator -->
-      <a-entity 
+      <a-entity
         id="sim-slot-indicator"
         position="0 0 0"
         visible="false">
@@ -209,18 +211,18 @@
           animation="property: position.x; to: -0.1; loop: true; dur: 3000; easing: linear">
         </a-entity>
       </a-entity>
-
+ 
       <!-- Camera -->
       <a-entity camera></a-entity>
     </a-scene>
-
+ 
     <!-- Step Description -->
     <div class="step-description" id="step-description">Point your camera at the router to detect components</div>
-
+ 
     <!-- Video Feed (Hidden) -->
     <video id="video" autoplay style="display:none;"></video>
     <canvas id="canvas" style="display:none;"></canvas>
-
+ 
     <!-- Input Area -->
     <footer>
       <div class="input-area">
@@ -230,8 +232,145 @@
         <button class="send-button"><i class="fas fa-paper-plane"></i></button>
       </div>
     </footer>
-
+ 
     <script>
+
+
+
+
+
+const micButton = document.querySelector('.mic-button');
+      const textInput = document.getElementById('textInput');
+      const responseArea = document.querySelector('.response-area');
+      const RASA_API_URL = "https://34.229.142.15/webhooks/rest/webhook";
+      let recognition;
+      let transcript;
+      let textValue;
+      let tracker=0;
+
+      // Check if the browser supports the Web Speech API
+      if ('webkitSpeechRecognition' in window) {
+        const recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onstart = function() {
+          micButton.classList.add('active');
+          micButton.style.backgroundColor = 'red';
+          textInput.placeholder = "Listening...";
+          textInput.value = "";
+
+        };
+
+        recognition.onresult = async function(event) {
+          transcript = event.results[0][0].transcript;
+          textInput.value = transcript;
+          textValue = transcript;
+          textInput.placeholder = "Type something";
+          console.log(textValue);
+          if (textValue == "Wi-Fi." || textValue == "Devices." || textValue == "Front.") {
+            localStorage.setItem("page", textValue);
+            window.parent.postMessage({ key: "page", value: textValue }, "*");
+            console.log("from local storage: ", localStorage.getItem("page"));
+            
+          }
+
+          if (textValue == "Here you go." && tracker==0 || textValue.includes("Go.") && tracker==0){
+
+            textToSpeech("Perfect. See this small slot? That’s where your SIM card goes.");
+            toggleOverlay("sim");
+console.log("sim called");
+tracker++;
+
+}
+
+else if (textValue == "You mean these things?" && tracker==1 || textValue.includes("things?") && tracker==1) {
+
+  textToSpeech("That’s them! Pop one into each of those round ports on the back.");
+  
+  
+  toggleOverlay("antenna");
+console.log("antenna called");
+tracker++;
+
+}
+
+else if (textValue == "All right, there we go." && tracker==2 || textValue == "Alright, there we go." && tracker==2 || textValue == "All right, there you go." && tracker==2 ||
+textValue == "Alright, there we go." && tracker==2 || textValue == "All right."){
+  
+  textToSpeech("You’re crushing it. See this sticker overhere? That’s your Wi-Fi name and password. Make a note of it you'll need it to connect later.");
+  toggleOverlay("antenna");
+  toggleOverlay("wifi");
+console.log("wifi called");
+tracker++;
+
+}
+else if (textValue == "Got it. Thanks, Luna." && tracker==3 || textValue == "Thanks."){
+
+  textToSpeech("Great! Just one more step — plug in the charger. See this port right here? please make sure the charger is always connected for your router to stay up.");
+  toggleOverlay("wifi");
+  toggleOverlay("charger");
+console.log("charger called");
+tracker++;
+
+}
+
+          // sendMessageToRasa(transcript);
+          
+
+else if (textValue == "Is it visible now?" || textValue.includes("Visible.")){
+  textToSpeech("Got it! You’re working with the Model X3000. Now the fun part — I’ll walk you through a step-by-step guide, right on your screen.Let’s begin by inserting the SIM card . Can you tilt the device and show me the bottom?");
+}
+
+
+else if (textValue == "Like this?" || textValue.includes("Like.")){
+  toggleOverlay("sim");
+  textToSpeech("Nice work! Now show me the back of the router.");
+}
+
+
+else if (textValue == "Here it is." || textValue.includes("it is.")){
+  textToSpeech("Do you have the antennas handy?");
+}
+
+
+else if (textValue == "All set! It’s charging now." || textValue.includes("All set.")){
+  textToSpeech("Now, show me the front — let’s check everything is done correctly.");
+}
+
+else if (textValue == "Can you see it?" || textValue.includes("Can")){
+  textToSpeech("All lights are green. You’re officially online! Is there anything else I can help you with?");
+}
+
+          
+        };
+
+        recognition.onerror = function(event) {
+          console.error('Speech recognition error', event.error);
+          textInput.placeholder = "Error occurred. Please try again.";
+        };
+
+        recognition.onend = function() {
+          micButton.classList.remove('active');
+          micButton.style.backgroundColor = '#4CAF50';
+          textInput.placeholder = "Type something";
+        };
+
+        micButton.addEventListener('click', function() {
+          recognition.start();
+        });
+      } else {
+        micButton.disabled = true;
+        textInput.placeholder = 'Voice input not supported';
+      }
+
+
+
+
+
+
+
       // Text-to-Speech Function
       function textToSpeech(text) {
         if ('speechSynthesis' in window) {
@@ -243,7 +382,7 @@
           console.log("Text-to-speech not supported in this browser.");
         }
       }
-
+ 
       // State Management
       let routerDetected = false;
       let lastKnownPositions = {
@@ -258,14 +397,14 @@
         wifi: false,
         sim: false
       };
-
+ 
       // Toggle Overlay Function
       function toggleOverlay(type) {
         activeOverlays[type] = !activeOverlays[type];
         updateMenuItemState(type);
         updateOverlayVisibility();
       }
-
+ 
       // Update Menu Item Appearance
       function updateMenuItemState(type) {
         const menuItems = document.querySelectorAll('.feature-menu-item');
@@ -279,7 +418,7 @@
           }
         });
       }
-
+ 
       // Enhanced Update AR Overlay Visibility
       function updateOverlayVisibility() {
         const antennaModel = document.getElementById("antenna-model");
@@ -287,15 +426,17 @@
         const chargerIndicator = document.getElementById("charger-indicator");
         const wifiIndicator = document.getElementById("wifi-password-indicator");
         const simIndicator = document.getElementById("sim-slot-indicator");
-
+ 
         // Antenna Models
         if (activeOverlays.antenna && lastKnownPositions.antenna) {
           const originalPos = lastKnownPositions.antenna.to;
-          const duplicatePos = originalPos.split(' ').map((coord, i) => 
-            i === 1 ? parseFloat(coord) + 0.4 : coord
-          ).join(' ');
-          
-          antennaModel.setAttribute("position", originalPos);
+          const [x, y, z] = originalPos.split(' ').map(parseFloat);
+          const adjustedX = x - 0.15; // Move antenna left by 0.1 on x-axis
+          const adjustedY = y + 0.03;
+          const adjustedOriginalPos = `${adjustedX} ${adjustedY} ${z}`;
+          const duplicatePos = `${adjustedX} ${parseFloat(y) + 0.35} ${z}`;
+         
+          antennaModel.setAttribute("position", adjustedOriginalPos);
           antennaModel.setAttribute("visible", "true");
           antennaModel.setAttribute("animation__blink", {
             property: "material.opacity",
@@ -306,7 +447,7 @@
             loop: true,
             easing: "easeInOutSine"
           });
-          
+         
           antennaModelDuplicate.setAttribute("position", duplicatePos);
           antennaModelDuplicate.setAttribute("visible", "true");
           antennaModelDuplicate.setAttribute("animation__blink", {
@@ -324,61 +465,85 @@
           antennaModel.removeAttribute("animation__blink");
           antennaModelDuplicate.removeAttribute("animation__blink");
         }
-
+ 
         // Enhanced Charger Indicator
         if (activeOverlays.charger && lastKnownPositions.charger) {
-          chargerIndicator.setAttribute("position", lastKnownPositions.charger.to);
-          chargerIndicator.setAttribute("visible", "true");
+          const [x, y, z] = lastKnownPositions.charger.to.split(' ').map(parseFloat);
+          let adjustedX; // Move charger right by 0.1 on x-axis
+          let adjustedY;
+          let adjustedPos;
           
+          if (window.screen.width > 900){
+            adjustedX = x + 0.01;
+            adjustedY = y - 0.04;
+          }
+          else {
+            adjustedX = x + 0.155;
+            adjustedY = y - 0.099;
+          }
+
+
+          adjustedPos = `${adjustedX} ${adjustedY} ${z}`;
+         
+          chargerIndicator.setAttribute("position", adjustedPos);
+          chargerIndicator.setAttribute("visible", "true");
+         
           // Add floating animation
           chargerIndicator.setAttribute("animation__float", {
-            property: "position",
-            to: `${lastKnownPositions.charger.to.split(' ')[0]} ${parseFloat(lastKnownPositions.charger.to.split(' ')[1])} ${lastKnownPositions.charger.to.split(' ')[2]}`,
-            dir: "alternate",
-            loop: true,
-            dur: 2000,
-            easing: "easeInOutSine"
+            // property: "position",
+            // to: `${adjustedX} ${y} ${z}`,
+            // dir: "alternate",
+            // loop: true,
+            // dur: 2000,
+            // easing: "easeInOutSine"
           });
         } else {
           chargerIndicator.setAttribute("visible", "false");
-          chargerIndicator.removeAttribute("animation__float");
+          // chargerIndicator.removeAttribute("animation__float");
         }
-
+ 
         // Enhanced WiFi Indicator
         if (activeOverlays.wifi && lastKnownPositions.wifi) {
-          wifiIndicator.setAttribute("position", lastKnownPositions.wifi.to);
+          const [x, y, z] = lastKnownPositions.wifi.to.split(' ').map(parseFloat);
+          const adjustedX = x - 0.15; // Move wifi left by 0.1 on x-axis
+          const adjustedY = y;
+          const adjustedPos = `${adjustedX} ${adjustedY} ${z}`;
+         
+          wifiIndicator.setAttribute("position", adjustedPos);
           wifiIndicator.setAttribute("visible", "true");
-          
+         
           // Add floating animation
           wifiIndicator.setAttribute("animation__float", {
-            property: "position",
-            to: `${lastKnownPositions.wifi.to.split(' ')[0]} ${parseFloat(lastKnownPositions.wifi.to.split(' ')[1])} ${lastKnownPositions.wifi.to.split(' ')[2]}`,
-            dir: "alternate",
-            loop: true,
-            dur: 2000,
-            easing: "easeInOutSine"
+            // property: "position",
+            // to: `${adjustedX} ${y} ${z}`,
+            // dir: "alternate",
+            // loop: true,
+            // dur: 2000,
+            // easing: "easeInOutSine"
           });
         } else {
           wifiIndicator.setAttribute("visible", "false");
-          wifiIndicator.removeAttribute("animation__float");
+          // wifiIndicator.removeAttribute("animation__float");
         }
-
+ 
         // SIM Slot Indicator
         if (activeOverlays.sim && lastKnownPositions.charger) {
           // Use charger slot coordinates with offset for SIM slot
-          const chargerPos = lastKnownPositions.charger.to.split(' ').map(parseFloat);
-          const simPos = `${chargerPos[0] + 0.1} ${chargerPos[1] - 0.2} ${chargerPos[2]}`;
-          
+          const [x, y, z] = lastKnownPositions.charger.to.split(' ').map(parseFloat);
+          const adjustedX = x + 0.1; // Use the same adjustment as charger
+ 
+          const simPos = `${adjustedX + 0.3} ${y - 0.24} ${z}`;
+         
           simIndicator.setAttribute("position", simPos);
           simIndicator.setAttribute("visible", "true");
-          
+         
           // Start the floating animation
           const simModel = simIndicator.querySelector('[gltf-model]');
           if (simModel) {
             simModel.setAttribute("animation", {
               property: "position.x",
               from: "0.02",
-              to: "-0.02",
+              to: "-0.22",
               dur: "1000",
               loop: "true",
               easing: "linear"
@@ -392,7 +557,7 @@
           }
         }
       }
-
+ 
       // Menu Functionality
       document.getElementById("nav-menu").addEventListener("click", function(e) {
         if (e.target.tagName === 'A') {
@@ -402,60 +567,135 @@
           if (btnText.includes("setup wifi")) window.location.href = "http://127.0.0.1:5500/new-wifi.html";
         }
       });
-
+ 
       document.getElementById("hamburger-menu").addEventListener("click", function() {
         const navMenu = document.getElementById("nav-menu");
         navMenu.style.display = navMenu.style.display === "flex" ? "none" : "flex";
       });
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       // Object Detection Setup
       const video = document.getElementById('video');
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
-
+ 
       // Start Camera
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-          video.srcObject = stream;
+    // Modify your camera initialization code:
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+  .then(stream => {
+    video.srcObject = stream;
+    video.play(); // Add this line
+    video.width = window.screen.width / 2;
+    console.log("video width", video.width);
+    
+  })
+  .catch(err => {
+    console.error("Camera access error:", err);
+    document.getElementById("step-description").textContent = 
+      "Could not access camera. Please enable camera permissions and refresh.";
+    // Add a button to retry camera access
+    const retryBtn = document.createElement('button');
+    retryBtn.textContent = 'Retry Camera Access';
+    retryBtn.onclick = () => window.location.reload();
+    document.getElementById("step-description").appendChild(retryBtn);
+  });
+ 
+        // if(true){
+        //            toggleOverlay('sim');
+                   
+        //            setTimeout(()=> {
+        //           toggleOverlay('sim')
+        //           setTimeout(() => {
+        //             toggleOverlay('antenna')
+        //             setTimeout(() => {
+        //               toggleOverlay("antenna")
+        //               setTimeout(() =>{
+        //                 toggleOverlay("wifi")
+        //                 setTimeout(() => {
+        //                   toggleOverlay("wifi")
+        //                   setTimeout(() => {
+        //                     toggleOverlay("charger")
+        //                   }, 5000)
+        //                 }, 5000)
+        //               }, 5000)
+
+        //             }, 10000)
+        //           }, 5000)
+        //           }, 40000)
+        //     }
+
+
+        textInput.addEventListener("change", function (e) {       
+          console.log("its changed");
+          console.log(e);
+          
         })
-        .catch(err => {
-          console.error("Camera access error:", err);
-          document.getElementById("step-description").textContent = "Could not access camera. Please enable camera permissions.";
-        });
+
+
+
+
+
+
+              
+
+
+
+
+
 
       // Detection Loop
       setInterval(() => {
         if (video.readyState === video.HAVE_ENOUGH_DATA) {
-          canvas.width = video.videoWidth;
+          canvas.width = video.width;
           canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          console.log("canvas widht",canvas.width);
+          console.log("vidoW widht",video.videoWidth);
           
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+         
           canvas.toBlob(async (blob) => {
             const formData = new FormData();
             formData.append('file', blob, 'frame.jpg');
-            
+           
             try {
-              const response = await fetch('https://rasa.qemsha.com/yolo', {
+              const response = await fetch('https://rasa.qemsha.com/yolo/predict/', {
                 method: 'POST',
                 body: formData
               });
-              
+             
               const result = await response.json();
               console.log("Detection results:", result);
               
+             
               // Track if we detected any components in this frame
               let detectedInThisFrame = false;
-
+ 
               // Process detections
               if (result.predictions && Array.isArray(result.predictions)) {
                 result.predictions.forEach(pred => {
                   const label = pred.label || pred.class || pred.name;
                   const bbox = pred.bbox || pred.box || [pred.x, pred.y, pred.width, pred.height];
-                  
+                 
                   if (label && bbox && bbox.length === 4) {
                     const [x, y, width, height] = bbox;
                     const animPos = yoloToArAnimation(x, y, width, height, canvas.width, canvas.height);
-
+ 
                     if (label.toLowerCase().includes("antenna")) {
                       lastKnownPositions.antenna = animPos;
                       detectedInThisFrame = true;
@@ -469,69 +709,90 @@
                   }
                 });
               }
-
+ 
               // Update router detection status
-              routerDetected = detectedInThisFrame || 
-                (activeOverlays.antenna && lastKnownPositions.antenna) || 
-                (activeOverlays.charger && lastKnownPositions.charger) || 
+              routerDetected = detectedInThisFrame ||
+                (activeOverlays.antenna && lastKnownPositions.antenna) ||
+                (activeOverlays.charger && lastKnownPositions.charger) ||
                 (activeOverlays.wifi && lastKnownPositions.wifi) ||
                 (activeOverlays.sim && lastKnownPositions.charger); // SIM depends on charger position
-
+ 
               // Update UI
               updateOverlayVisibility();
-              document.getElementById("step-description").textContent = 
-                routerDetected 
-                  ? (detectedInThisFrame 
-                      ? "Router components detected. Toggle features from menu." 
+              document.getElementById("step-description").textContent =
+                routerDetected
+                  ? (detectedInThisFrame
+                      ? "Router components detected. Toggle features from menu."
                       : "Showing last known positions of components.")
                   : "Point your camera at the router to detect components";
-
+ 
             } catch (err) {
               console.error("Detection error:", err);
             }
           }, 'image/jpeg');
         }
-      }, 2500);
-
+      }, 5000);
+ 
       // Convert YOLO coordinates to AR coordinates
       function yoloToArAnimation(x1, y1, width, height, imageWidth, imageHeight) {
-        const centerX = x1 + width / 2;
-        const centerY = y1 + height / 2;
-        const normX = centerX / imageWidth;
-        const normY = centerY / imageHeight;
-        const aframeX = (normX - 0.5) * 1.0;
-        const aframeY = -(normY - 0.5) * 0.6;
-        
-        return {
-          from: `${aframeX} ${aframeY + 0.1} -1`,
-          to: `${aframeX} ${aframeY + 0.1} -1`
-        };
-      }
-
+    // Calculate center of the detected object
+    const centerX = x1 + width / 2;
+    const centerY = y1 + height / 2;
+   
+    // Normalize coordinates to [0,1] range
+    const normX = centerX / imageWidth;
+    const normY = centerY / imageHeight;
+   
+    // Adjust for mobile device orientation
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let aframeX, aframeY;
+   
+    if (isMobile) {
+        // Mobile-specific adjustments
+        // Flip Y coordinate for mobile (camera feed might be mirrored)
+        aframeX = (normX - 0.5) * 1.5;  // Increased multiplier for better positioning
+        aframeY = -(normY - 0.5) * 1.2;  // Increased multiplier and inverted Y
+    } else {
+        // Desktop adjustments
+        aframeX = (normX - 0.5) * 1.0;
+        aframeY = -(normY - 0.5) * 0.6;
+    }
+   
+    // Add small offset to ensure visibility
+    const zPosition = -1;
+    const yOffset = 0.1;
+   
+    return {
+        from: `${aframeX} ${aframeY + yOffset} ${zPosition}`,
+        to: `${aframeX} ${aframeY + yOffset} ${zPosition}`
+    };
+}
+ 
       // Register custom A-Frame component for transparent models
-      AFRAME.registerComponent("make-transparent", {
-        init: function () {
-          this.el.addEventListener("model-loaded", () => {
-            const mesh = this.el.getObject3D("mesh");
-            if (mesh) {
-              mesh.traverse((node) => {
-                if (node.isMesh && node.material) {
-                  node.material.color.setHex(0x0000ff);
-                  node.material.emissive.setHex(0x0000ff);
-                  node.material.opacity = 0.15;
-                  node.material.transparent = true;
-                  node.material.emissiveIntensity = 1.5;
-                  node.material.needsUpdate = true;
-                }
-              });
-            }
-          });
-        }
-      });
-
-      // Initialize components
-      document.querySelector("#antenna-model").setAttribute("make-transparent", "");
-      document.querySelector("#antenna-model-duplicate").setAttribute("make-transparent", "");
+      // AFRAME.registerComponent("make-transparent", {
+      //   init: function () {
+      //     this.el.addEventListener("model-loaded", () => {
+      //       const mesh = this.el.getObject3D("mesh");
+      //       if (mesh) {
+      //         mesh.traverse((node) => {
+      //           if (node.isMesh && node.material) {
+      //             node.material.color.setHex(0x0000ff);
+      //             node.material.emissive.setHex(0x0000ff);
+      //             node.material.opacity = 0.15;
+      //             node.material.transparent = true;
+      //             node.material.emissiveIntensity = 1.5;
+      //             node.material.needsUpdate = true;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
+      // });
+ 
+      // // Initialize components
+      // document.querySelector("#antenna-model").setAttribute("make-transparent", "");
+      // document.querySelector("#antenna-model-duplicate").setAttribute("make-transparent", "");
     </script>
   </body>
 </html>
+ 
