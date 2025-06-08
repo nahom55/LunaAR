@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
+    <title>AR Assistant SPA</title>
+    <style>
+        /* Remove all default margins/padding */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        /* Content container - fills entire screen */
+        #spa-content {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        
+        /* Iframe styling - no borders */
+        .spa-page {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        
+        /* Show active page */
+        .spa-page.active {
+            display: block;
+        }
+        
+        /* Floating head avatar */
+        #floating-head-div {
+            position: fixed;
+            bottom: 20px;
+            right: 5px;
+            top: 20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #4CAF50;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            z-index: 9998;
+            background: rgb(78, 43, 218);
+        }
+    </style>
+    <!-- Model Viewer component -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+<body>
+    <!-- Blue circle background container -->
+    <div id="floating-head-div">
+        <!-- A-Frame scene for floating avatar -->
+        <a-scene
+        embedded
+        arjs="sourceType: webcam; trackingMethod: best;"
+        renderer="logarithmicDepthBuffer: true; colorManagement: true, exposure: 1.0; toneMapping: ACESFilmic;"
+        vr-mode-ui="enabled: false"
+        >
+          <a-assets>
+            <a-asset-item id="avatarModel" src="test-anm.glb"></a-asset-item>
+          </a-assets>
+      
+          <a-entity id="floating-head"
+          gltf-model="#avatarModel"
+          scale="0.059 0.059 0.059"
+          position="0 -3.43 -1"
+          animation-mixer="clip: *; timeScale: 0; loop: repeat" >
+          </a-entity>
+          <a-entity id="audioElement" sound="src: url(kid.mp3); autoplay: false;"></a-entity>
+
+          <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        </a-scene>
+    </div>
+    
+    <!-- Content container -->
+    <div id="spa-content">
+        <!-- Frontpage content -->
+        <iframe id="frontpage-frame" class="spa-page active" 
+                src="frontpage.html" 
+                frameborder="0"
+                scrolling="no"
+                allow="camera; microphone">
+        </iframe>
+        
+        <!-- New WiFi content -->
+        <iframe id="new-wifi-frame" class="spa-page" 
+                src="new-wifi-index.html" 
+                frameborder="0"
+                scrolling="no"
+                allow="camera; microphone">
+        </iframe>
+        
+        <!-- Devices content -->
+        <iframe id="devices-frame" class="spa-page" 
+                src="devices.html" 
+                frameborder="0"
+                scrolling="no"
+                allow="camera; microphone">
+        </iframe>
+    </div>
+
+    <script>
+      window.addEventListener("message", function(e){
+        if (e.data.value == "Wi-Fi."){
+          showPage("new-wifi");
+          textToSpeech("Awesome! Let's get you connected. First, let's identify your device model could you point your phone's camera at the router for me?");
+        }
+        else if (e.data.value == "Devices.") {
+          showPage("devices");
+          textToSpeech("asolutely! Here are some options that fit your budget: Samsung A23 Itel Pro 30 Samsung A15 You can compare specs right here.Like what you see? You can either visit our nearest store or place an order for delivery.");
+        }
+        else if (e.data.value == "Front.") {
+          showPage("frontpage");
+        }
+        console.log("from main local storage: ", localStorage.getItem("page"));
+      });
+
+      // Text-to-Speech Function
+      function textToSpeech(message) {
+        if (!window.speechSynthesis) {
+          console.error("Speech synthesis not supported in this browser.");
+          return null;
+        }
+
+        function speak() {
+          const voices = window.speechSynthesis.getVoices();
+
+          // Try to find a known female English voice
+          const femaleVoice = voices.find(voice =>
+            voice.name.toLowerCase().includes("zira") || // MS Zira (Windows)
+            voice.name.toLowerCase().includes("susan") || // Google Susan
+            voice.name.toLowerCase().includes("female") ||
+            voice.name.toLowerCase().includes("woman") ||
+            (voice.lang === "en-US" && voice.name.toLowerCase().includes("english")) ||
+            (voice.lang === "en-US" && voice.name.toLowerCase().includes("us"))
+          ) || voices.find(voice => voice.lang === "en-US") || voices[0]; // Fallbacks
+
+          const utterance = new SpeechSynthesisUtterance(message);
+          utterance.voice = femaleVoice;
+          
+          // Start lip-sync when speech starts
+          utterance.onstart = function() {
+            startLipSyncAnimation();
+          };
+          
+          window.speechSynthesis.speak(utterance);
+          return utterance;
+        }
+
+        // If voices aren't loaded yet, wait for them to load first
+        if (window.speechSynthesis.getVoices().length === 0) {
+          window.speechSynthesis.onvoiceschanged = speak;
+        } else {
+          return speak();
+        }
+      }  
+
+      // Remove any residual iframe styling
+      document.addEventListener('DOMContentLoaded', function() {
+          const iframes = document.querySelectorAll('iframe');
+          iframes.forEach(iframe => {
+              iframe.style.border = 'none';
+              iframe.style.margin = '0';
+              iframe.style.padding = '0';
+              iframe.style.outline = 'none';
+          });
+          
+          // Initialize floating head
+          initFloatingHead();
+      });
+
+      // Show the selected page
+      function showPage(pageName) {
+          document.querySelectorAll('.spa-page').forEach(page => {
+              page.classList.remove('active');
+          });
+          document.getElementById(`${pageName}-frame`).classList.add('active');
+          
+          // Adjust avatar visibility based on page
+          updateAvatarVisibility(pageName);
+      }
+      
+      // Initialize floating head avatar
+      function initFloatingHead() {
+          const floatingHead = document.getElementById('floating-head-div');
+          
+          // Add click handler for interactions
+          floatingHead.addEventListener('click', function() {
+              console.log('Avatar clicked!');
+          });
+      }
+      
+      // Update avatar visibility and position based on current page
+      function updateAvatarVisibility(pageName) {
+          const floatingHead = document.getElementById('floating-head-div');
+          
+          if (pageName === 'frontpage') {
+              // Hide the floating head on main AR page
+              floatingHead.style.display = 'none';
+          } else {
+              // Show on all other pages
+              floatingHead.style.display = 'block';
+              
+              // You can adjust position/size based on page
+              if (pageName === 'new-wifi') {
+                  floatingHead.style.width = '120px';
+                  floatingHead.style.height = '120px';
+              } else if (pageName === 'devices') {
+                  floatingHead.style.width = '120px';
+                  floatingHead.style.height = '120px';
+              }
+          }
+      }
+      
+      // Handle browser back/forward
+      window.addEventListener('popstate', function(e) {
+          if (e.state && e.state.page) {
+              showPage(e.state.page);
+          }
+      });
+       
+      // Load initial page based on hash
+      if (window.location.hash) {
+          const initialPage = window.location.hash.substring(1);
+          showPage(initialPage);
+      } else {
+          // Set default page if no hash exists
+          showPage('frontpage');
+          history.replaceState({page: 'frontpage'}, '', '#frontpage');
+      }
+      
+      // Handle navigation requests from iframes
+      window.addEventListener('message', function(e) {
+          if (e.data === 'navigate-to-wifi') {
+              showPage('new-wifi');
+              history.pushState({page: 'new-wifi'}, '', '#new-wifi');
+          } else if (e.data === 'navigate-to-devices') {
+              showPage('devices');
+              history.pushState({page: 'devices'}, '', '#devices');
+          } else if (e.data === 'navigate-to-frontpage') {
+              showPage('frontpage');
+              history.pushState({page: 'frontpage'}, '', '#frontpage');
+          }
+      });
+
+      // Function to load lip-sync data from JSON file
+      async function loadLipSyncData() {
+        try {
+          const response = await fetch('output.json');
+          if (!response.ok) throw new Error('Failed to load lip-sync data');
+          return await response.json();
+        } catch (error) {
+          console.error('Error loading lip-sync data:', error);
+          return null;
+        }
+      }
+
+      // Map Rhubarb visemes to Oculus Viseme IDs
+      const rhubarbToOculusViseme = {
+        A: 10, // aa
+        B: 0,  // sil
+        C: 7,  // SS
+        D: 4,  // DD
+        E: 11, // E
+        F: 5,  // FF
+        G: 6,  // CH
+        H: 10, // aa
+        X: 0,  // sil
+      };
+
+      // Common viseme names used in GLB models
+      const commonVisemeNames = [
+        'viseme_sil', 'viseme_PP', 'viseme_FF', 'viseme_TH', 'viseme_DD',
+        'viseme_kk', 'viseme_CH', 'viseme_SS', 'viseme_nn', 'viseme_RR',
+        'viseme_aa', 'viseme_E', 'viseme_ih', 'viseme_oh', 'viseme_ou'
+      ];
+
+      // Function to animate the character's mouth
+      function animateCharacterMouth(visemeId) {
+        const humanModel = document.getElementById("floating-head");
+        let foundMorphTarget = false;
+
+        humanModel.object3D.traverse((child) => {
+          if (child.isMesh && child.morphTargetInfluences) {
+            const morphTargetDictionary = child.morphTargetDictionary;
+            
+            if (!morphTargetDictionary) return;
+
+            // First try the standard viseme names
+            const visemeName = commonVisemeNames[visemeId];
+            if (visemeName && morphTargetDictionary[visemeName] !== undefined) {
+              // Reset all blend shapes to 0
+              for (let i = 0; i < child.morphTargetInfluences.length; i++) {
+                child.morphTargetInfluences[i] = 0;
+              }
+              
+              // Apply the current viseme
+              child.morphTargetInfluences[morphTargetDictionary[visemeName]] = 1;
+              foundMorphTarget = true;
+              return;
+            }
+
+            // If standard names not found, try to find any matching morph target
+            for (const key in morphTargetDictionary) {
+              if (key.toLowerCase().includes('viseme') || key.toLowerCase().includes('mouth')) {
+                // Reset all blend shapes to 0
+                for (let i = 0; i < child.morphTargetInfluences.length; i++) {
+                  child.morphTargetInfluences[i] = 0;
+                }
+                
+                // Apply the first found mouth-related morph target
+                child.morphTargetInfluences[morphTargetDictionary[key]] = 1;
+                foundMorphTarget = true;
+                return;
+              }
+            }
+          }
+        });
+
+        if (!foundMorphTarget) {
+          console.warn('No suitable mouth morph targets found in the model');
+        }
+      }
+
+      // Modified function to start lip-sync animation
+      async function startLipSyncAnimation() {
+        const lipSyncData = await loadLipSyncData();
+        if (!lipSyncData) {
+          console.error('Could not load lip-sync data');
+          return;
+        }
+
+        const audioElement = document.getElementById("audioElement");
+        
+        // Clear any previous timeouts
+        if (window.lipSyncTimeouts) {
+          window.lipSyncTimeouts.forEach(timeout => clearTimeout(timeout));
+          window.lipSyncTimeouts = [];
+        } else {
+          window.lipSyncTimeouts = [];
+        }
+
+        lipSyncData.mouthCues.forEach((cue) => {
+          const timeoutId = setTimeout(() => {
+            const visemeId = rhubarbToOculusViseme[cue.value] || 0;
+            animateCharacterMouth(visemeId);
+          }, cue.start * 1000);
+          
+          window.lipSyncTimeouts.push(timeoutId);
+        });
+
+        // Play audio if available
+        if (audioElement.components.sound) {
+          audioElement.components.sound.playSound();
+        }
+        
+        // Reset to neutral expression after animation completes
+        const totalDuration = lipSyncData.mouthCues[lipSyncData.mouthCues.length - 1].end * 1000;
+        setTimeout(() => {
+          animateCharacterMouth(0); // Reset to silent viseme
+        }, totalDuration);
+      }
+
+      // Eye blinking functionality
+      function animateEyes() {
+        const humanModel = document.getElementById("floating-head");
+        humanModel.object3D.traverse((child) => {
+          if (child.isMesh && child.morphTargetInfluences) {
+            const morphTargetDictionary = child.morphTargetDictionary;
+
+            if (morphTargetDictionary) {
+              // Try standard eye blink morph target names
+              const leftEyeBlink = morphTargetDictionary['eyeBlinkLeft'] || 
+                                 morphTargetDictionary['blinkLeft'] || 
+                                 morphTargetDictionary['EyeBlink_L'];
+              
+              const rightEyeBlink = morphTargetDictionary['eyeBlinkRight'] || 
+                                  morphTargetDictionary['blinkRight'] || 
+                                  morphTargetDictionary['EyeBlink_R'];
+
+              if (leftEyeBlink !== undefined) {
+                child.morphTargetInfluences[leftEyeBlink] = 1;
+              }
+              if (rightEyeBlink !== undefined) {
+                child.morphTargetInfluences[rightEyeBlink] = 1;
+              }
+            }
+          }
+        });
+
+        setTimeout(() => {
+          humanModel.object3D.traverse((child) => {
+            if (child.isMesh && child.morphTargetInfluences) {
+              const morphTargetDictionary = child.morphTargetDictionary;
+
+              if (morphTargetDictionary) {
+                const leftEyeBlink = morphTargetDictionary['eyeBlinkLeft'] || 
+                                   morphTargetDictionary['blinkLeft'] || 
+                                   morphTargetDictionary['EyeBlink_L'];
+                
+                const rightEyeBlink = morphTargetDictionary['eyeBlinkRight'] || 
+                                    morphTargetDictionary['blinkRight'] || 
+                                    morphTargetDictionary['EyeBlink_R'];
+
+                if (leftEyeBlink !== undefined) {
+                  child.morphTargetInfluences[leftEyeBlink] = 0;
+                }
+                if (rightEyeBlink !== undefined) {
+                  child.morphTargetInfluences[rightEyeBlink] = 0;
+                }
+              }
+            }
+          });
+        }, 200);
+      }
+
+      // Start periodic blinking
+      setInterval(() => {
+        animateEyes();
+      }, 4000);
+    </script>
+</body>
+</html>
