@@ -168,6 +168,23 @@ h2 {
         startButton.addEventListener("click", startCamera);
       }
 
+
+
+
+
+// Get all the modal buttons
+const modalButtons = document.querySelectorAll('.btnpop');
+
+// Add click event to each button
+modalButtons.forEach(button => {
+  button.addEventListener('click', closemodalfun);
+});
+
+
+
+
+
+
       function startCamera() {
         navigator.mediaDevices
           .getUserMedia({ video: true, audio: false }) // You can enable audio if needed
