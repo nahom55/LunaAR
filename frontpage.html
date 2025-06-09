@@ -24,49 +24,46 @@
   backdrop-filter: blur(4px);
   z-index: 100;
   transition: all 0.5s;
-}.modal{
+}
+.modal {
   position: fixed;
-top: 20%;
-right: 0;
-background-color:rgba(0.0.0.0.6) ;
-border: 1px solid #ccc;
-box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-width: 300px;
-padding: 15px;
-z-index: 10000;
-border-radius: 8px;
-font-family: sans-serif;
-animation: slideIn 0.3s ease-out;
-background-color: black;
-background-color:rgb(21, 38, 54);
-border: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0,0,0,0.6);
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  width: 300px;
+  padding: 15px;
+  z-index: 10000;
+  border-radius: 8px;
+  font-family: sans-serif;
+  animation: slideIn 0.3s ease-out;
+  background-color: rgb(21, 38, 54);
+  border: none;
 }
-h2{
-color: #ccc;
-text-align: center;
+h2 {
+  color: #ccc;
+  text-align: center;
 }
-.pop-up{
+.pop-up {
   width: 18rem;
   padding-left: 0;
   margin-left: 0rem;
   padding-right: 0;
   font-size: 0.4rem;
-  background-color:rgba(0.0.0.0.6) ;
-  background-color:rgb(21, 38, 54);
-
- 
-}.btnpop{
+  background-color: rgb(21, 38, 54);
+}
+.btnpop {
   width: 13rem;
   margin-left: 3rem;
   margin-top: 0.4rem;
-  background-color:blue;
+  background-color: blue;
   color: white;
   border-radius: 15px;
   height: 2rem;
   border: none;
 }
-
-
 .video-icon {
   background-color: blue; /* Bootstrap blue */
   color: white;
@@ -75,8 +72,6 @@ text-align: center;
   font-size: 10px;
   margin-right: 10px;
 }
-
-
     </style>
   </head>
   <body style="margin: 0; overflow: hidden;">
@@ -93,53 +88,16 @@ text-align: center;
     </div>
     <!-- A-Frame Scene with AR.js -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     <div class="modal hidden">
       <!-- <button type="button" class="btn--close-modal">&times;</button> -->
-     
-   
-      <div  class="pop-up">
-  <h2> <i class="fas fa-video video-icon"></i>qemsha.com wants to use <br> your screen</h2>
-       
-    <button class="btnpop" type="button">Allow while visiting the site</button>
-    <button class="btnpop" type="button">Allow this time</button>
-    <button class="btnpop" type="button">Never Allow</button>
-         </div>
-        </div>
-       </div>
-       <button class="openModal">Open modal</button>
-   
-       <div class="overlay hidden"></div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      <div class="pop-up">
+        <h2> <i class="fas fa-video video-icon"></i>qemsha.com wants to use <br> your screen</h2>
+        <button class="btnpop" type="button">Allow while visiting the site</button>
+        <button class="btnpop" type="button">Allow this time</button>
+        <button class="btnpop" type="button">Never Allow</button>
+      </div>
+    </div>
+    <div class="overlay hidden"></div>
 
     <a-scene
       embedded
@@ -183,30 +141,21 @@ text-align: center;
     </footer>
 
     <script>
-
-
-
-const openModal=document.querySelector(".video-button");
-const modal=document.querySelector(".modal");
-const overlay=document.querySelector(".overlay");
- 
-openModal.addEventListener("click",openmodalfun)
-overlay.addEventListener("click",closemodalfun)
- 
-
-function openmodalfun() {
-  modal.classList.remove("hidden");
-  overlay.classList.remove("hidden");
-}
-function closemodalfun() {
-  modal.classList.add("hidden");
-  overlay.classList.add("hidden");
-}
- 
-
-
-
-
+      const openModal = document.querySelector(".video-button");
+      const modal = document.querySelector(".modal");
+      const overlay = document.querySelector(".overlay");
+      
+      openModal.addEventListener("click", openmodalfun)
+      overlay.addEventListener("click", closemodalfun)
+      
+      function openmodalfun() {
+        modal.classList.remove("hidden");
+        overlay.classList.remove("hidden");
+      }
+      function closemodalfun() {
+        modal.classList.add("hidden");
+        overlay.classList.add("hidden");
+      }
 
       const startButton = document.getElementById("startButton");
       const screenSharingVideo = document.getElementById("screenSharingVideo"); // Add this if not already in HTML
