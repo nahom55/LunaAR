@@ -60,55 +60,11 @@
         <button class="mic-button"><i class="fas fa-microphone"></i></button>
         <button class="video-button"><i class="fas fa-video"></i></button>
         <input type="text" placeholder="Type something" id="textInput">
-        <button class="send-button" id="startButton"><i class="fas fa-paper-plane"></i></button>
+        <button class="send-button"><i class="fas fa-paper-plane"></i></button>
       </div>
     </footer>
 
     <script>
-      
-
-
-
-
-
-
-      const startButton = document.getElementById("startButton");
- 
-let screenStream = null;
-let mediaRecorder = null;
-let recordedChunks = [];
- 
-if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-  alert("Screen sharing is not supported by your browser.");
-} else {
-  startButton.addEventListener("click", shareScreen);
-}
- 
-function shareScreen() {
-  navigator.mediaDevices
-    .getDisplayMedia({ video: true })
-    .then((stream) => {
-      screenStream = stream;
-      screenSharingVideo.srcObject = stream;
- 
-      startButton.disabled = true;
-      stream.getVideoTracks()[0].addEventListener("ended", () => {
-        stopSharing();
-      });
-    })
-    .catch((error) => {
-      console.error("Error starting screen sharing:", error);
-    });
-}
-
-
-
-
-
-
-
-
-
       
       const micButton = document.querySelector('.mic-button');
       const textInput = document.getElementById('textInput');
