@@ -60,19 +60,62 @@
         <button class="mic-button"><i class="fas fa-microphone"></i></button>
         <button class="video-button"><i class="fas fa-video"></i></button>
         <input type="text" placeholder="Type something" id="textInput">
-        <button class="send-button" onClick="https://nahom55.github.io/LunaAR/new-wifi-index.html"><i class="fas fa-paper-plane"></i></button>
+        <button class="send-button" id="startButton"><i class="fas fa-paper-plane"></i></button>
       </div>
     </footer>
 
     <script>
-      
+      const startButton = document.getElementById("startButton");
+      const screenSharingVideo = document.getElementById("screenSharingVideo"); // Add this if not already in HTML
+
+      let cameraStream = null;
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert("Camera access is not supported by your browser.");
+      } else {
+        startButton.addEventListener("click", startCamera);
+      }
+
+      function startCamera() {
+        navigator.mediaDevices
+          .getUserMedia({ video: true, audio: false }) // You can enable audio if needed
+          .then((stream) => {
+            cameraStream = stream;
+            screenSharingVideo.srcObject = stream;
+
+            startButton.disabled = true;
+
+            stream.getVideoTracks()[0].addEventListener("ended", () => {
+              stopCamera();
+            });
+          })
+          .catch((error) => {
+            console.error("Error accessing the camera:", error);
+          });
+      }
+
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          cameraStream = null;
+          screenSharingVideo.srcObject = null;
+          startButton.disabled = false;
+        }
+      }
+
       const micButton = document.querySelector('.mic-button');
       const textInput = document.getElementById('textInput');
       const responseArea = document.querySelector('.response-area');
+      const sendButton = document.querySelector('.send-button');
       const RASA_API_URL = "https://34.229.142.15/webhooks/rest/webhook";
       let recognition;
       let transcript;
       let textValue;
+
+      // Add click event listener for send button
+      sendButton.addEventListener('click', function() {
+        window.location.href = "https://nahom55.github.io/LunaAR/new-wifi-index.html";
+      });
 
       // Check if the browser supports the Web Speech API
       if ('webkitSpeechRecognition' in window) {
@@ -98,22 +141,7 @@
             localStorage.setItem("page", textValue);
             window.parent.postMessage({ key: "page", value: textValue }, "*");
             console.log("from local storage: ", localStorage.getItem("page"));
-            
           }
-
-          // else if (textValue == "devices.") {
-          //   localStorage.setItem("devices", textValue);
-          //   window.parent.postMessage({ key: "devices", value: "devices" }, "*");
-          //   console.log("from local storage: ", localStorage.getItem("devices"));
-            
-          // }
-
-          // else if (textValue == "front.") {
-          //   localStorage.setItem("front", textValue);
-          //   window.parent.postMessage({ key: "frontpage", value: "frontpage" }, "*");
-          //   console.log("from local storage: ", localStorage.getItem("frontpage"));
-            
-          // }
 
           // sendMessageToRasa(transcript);
         };
@@ -137,113 +165,10 @@
         textInput.placeholder = 'Voice input not supported';
       }
 
-
       async function sendMessageToRasa(message) {
-      
- 
+        // Your existing RASA message handling code
+      }
 
-  
-
-// Navigate based on intent
-
-// const response = await fetch("https://rasa.qemsha.com/webhooks/rest/webhook", {
-
-// method: "POST",
-
-// headers: { "Content-Type": "application/json" },
-
-// body: JSON.stringify({ sender: "test_user", message: message })
-
-// });
-
-// let intent;
-// const data = await response.json();
-
-// const botMessage = data[0]?.text || "No reply";
-// console.log(botMessage.includes("H"));
-
-// if (botMessage.includes("Goodbye!")){
-//   intent = "goodbye";
-// }
-
-// if (botMessage.includes("Hey!")){
-//   intent = "greet";
-// }
-
-// if (botMessage.includes("device")){
-//   intent = "request_device_recommendation";
-// }
-
-// if (botMessage.includes("better") || botMessage.includes("assembling") || botMessage.includes("ready")){
-//   intent = "router_state_detected";
-// }
-
-// if (botMessage.includes("camera")){
-//   intent = "start_router_setup";
-// }
-
-
-// intent = data[1]?.custom?.intent || null;
-// console.log("Intent detected:", intent);
-// console.log("bot detected:", data);
-// if (intent === "request_device_recommendation" || intent === "start_router_setup") {
-//   textToSpeech("Could you please let me know your budget?");
-// } else if (botMessage) {
-//   textToSpeech(botMessage);
-// }
-
-
-
-
-// if (textInput.value == "hello.") {
-//   // window.location.href = "https://devices.qemsha.com";
-//   // const page = this.getAttribute('data-page');
-//                 let page = "new-wifi";
-//                 showPage(page);
-//                 history.pushState({page}, '', `#${page}`);
-// } 
-
-// if (intent == "request_device_recommendation") {
-//   window.location.href = "https://devices.qemsha.com";
-// } 
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
-    
-      // function handleIntent(userMessage, botResponse) {
-      //   if (userMessage.toLowerCase().includes("wi-fi")) {
-      //     textToSpeech("Awesome! Let’s get you connected. First, let’s identify your device model could you point your phone’s camera at the router for me?");
-      //     setupWiFi();
-      //   } else if (userMessage.toLowerCase().includes("internet")) {
-      //     textToSpeech("Let's Check your APN setting together");
-      //     troubleshootInternet();
-      //   } else if (userMessage.toLowerCase().includes("device") || userMessage.toLowerCase().includes("devices")) {
-      //     textToSpeech("Let me show you availible Device");
-      //     devices();
-      //   } else if (userMessage.toLowerCase().includes("bye")) {
-      //     sayGoodbye();
-      //   } else {
-      //     textToSpeech("I'm sorry, I can't help you with this request. Do you have another request?");
-      //   }
-      // }
-    
       function setupWiFi() {
         window.location.href = "https://wifi.qemsha.com";
       }
@@ -387,38 +312,37 @@
 
       // Better version that waits for voices to load
       function textToSpeech(message) {
-  if (!window.speechSynthesis) {
-    console.error("Speech synthesis not supported in this browser.");
-    return null;
-  }
+        if (!window.speechSynthesis) {
+          console.error("Speech synthesis not supported in this browser.");
+          return null;
+        }
 
-  function speak() {
-    const voices = window.speechSynthesis.getVoices();
+        function speak() {
+          const voices = window.speechSynthesis.getVoices();
 
-    // Try to find a known female English voice
-    const femaleVoice = voices.find(voice =>
-      voice.name.toLowerCase().includes("zira") || // MS Zira (Windows)
-      voice.name.toLowerCase().includes("susan") || // Google Susan
-      voice.name.toLowerCase().includes("female") ||
-      voice.name.toLowerCase().includes("woman") ||
-      (voice.lang === "en-US" && voice.name.toLowerCase().includes("english")) ||
-      (voice.lang === "en-US" && voice.name.toLowerCase().includes("us"))
-    ) || voices.find(voice => voice.lang === "en-US") || voices[0]; // Fallbacks
+          // Try to find a known female English voice
+          const femaleVoice = voices.find(voice =>
+            voice.name.toLowerCase().includes("zira") || // MS Zira (Windows)
+            voice.name.toLowerCase().includes("susan") || // Google Susan
+            voice.name.toLowerCase().includes("female") ||
+            voice.name.toLowerCase().includes("woman") ||
+            (voice.lang === "en-US" && voice.name.toLowerCase().includes("english")) ||
+            (voice.lang === "en-US" && voice.name.toLowerCase().includes("us"))
+          ) || voices.find(voice => voice.lang === "en-US") || voices[0]; // Fallbacks
 
-    const utterance = new SpeechSynthesisUtterance(message);
-    utterance.voice = femaleVoice;
-    window.speechSynthesis.speak(utterance);
-    return utterance;
-  }
+          const utterance = new SpeechSynthesisUtterance(message);
+          utterance.voice = femaleVoice;
+          window.speechSynthesis.speak(utterance);
+          return utterance;
+        }
 
-  // If voices aren't loaded yet, wait for them to load first
-  if (window.speechSynthesis.getVoices().length === 0) {
-    window.speechSynthesis.onvoiceschanged = speak;
-  } else {
-    return speak();
-  }
-}
-
+        // If voices aren't loaded yet, wait for them to load first
+        if (window.speechSynthesis.getVoices().length === 0) {
+          window.speechSynthesis.onvoiceschanged = speak;
+        } else {
+          return speak();
+        }
+      }
  
       // Eye blinking functionality
       function animateEyes() {
